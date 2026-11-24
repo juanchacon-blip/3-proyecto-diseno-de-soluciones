@@ -1,0 +1,104 @@
+# Microservicio 1: servicio web GraphQL. Expone las operaciones de las clases A (EnvioNacional) y B (Seguimiento)
+# y de la clase C (Paquete), cuyos datos viven en el microservicio 2; "envioOrigen" y "envioDestino" son datos de A.
+type Query {
+    "Listar A: todos los envios"
+    envios: [EnvioNacional]
+    "Listar A con parametro: filtra por origen y/o destino"
+    enviosFiltrados(origen: String, destino: String): [EnvioNacional]
+    "Busqueda de un envio por codigo (se usa antes de eliminar y de actualizar)"
+    envioPorCodigo(codigo: String!): EnvioNacional
+    "Consulta A con parametro: un solo envio por uno o dos criterios"
+    envioPorCriterios(codigo: String, origen: String, destino: String): EnvioNacional
+
+    "Listar B: todos los seguimientos"
+    seguimientos: [Seguimiento]
+    "Listar B con parametro: filtra por codigo de envio y/o ubicacion"
+    seguimientosFiltrados(envioCodigo: String, ubicacion: String): [Seguimiento]
+    "Busqueda de un seguimiento por codigo (se usa antes de eliminar y de actualizar)"
+    seguimientoPorCodigo(codigo: String!): Seguimiento
+    "Consulta B con parametro: un solo seguimiento por uno o dos criterios"
+    seguimientoPorCriterios(codigo: String, envioCodigo: String, ubicacion: String): Seguimiento
+
+    "Listar C: todos los paquetes con origen y destino de su envio"
+    paquetes: [Paquete]
+    "Listar C con parametro: filtra por codigo de envio y/o descripcion"
+    paquetesFiltrados(envioCodigo: String, descripcion: String): [Paquete]
+    "Busqueda por codigo (se usa antes de eliminar y de actualizar)"
+    paquetePorCodigo(codigo: String!): Paquete
+    "Consulta C con parametro: un solo paquete por uno o dos criterios"
+    paquetePorCriterios(codigo: String, envioCodigo: String, descripcion: String): Paquete
+}
+
+type Mutation {
+    addEnvio(input: EnvioInput!): EnvioNacional
+    updateEnvio(input: EnvioInput!): EnvioNacional
+    deleteEnvio(codigo: String!): EnvioNacional
+    addSeguimiento(input: SeguimientoInput!): Seguimiento
+    updateSeguimiento(input: SeguimientoInput!): Seguimiento
+    deleteSeguimiento(codigo: String!): Seguimiento
+    addPaquete(input: PaqueteInput!): Paquete
+    updatePaquete(input: PaqueteInput!): Paquete
+    deletePaquete(codigo: String!): Paquete
+}
+
+input PaqueteInput {
+    codigo: ID!
+    envioCodigo: String!
+    descripcion: String!
+    pesoKg: Float!
+    unidades: Int!
+    fechaRegistro: String!
+    fragil: Boolean
+}
+
+type Paquete {
+    codigo: ID
+    envioCodigo: String
+    descripcion: String
+    pesoKg: Float
+    unidades: Int
+    fechaRegistro: String
+    fragil: Boolean
+    envioOrigen: String
+    envioDestino: String
+}
+
+input EnvioInput {
+    codigo: ID!
+    origen: String!
+    destino: String!
+    precio: Float!
+    fechaSalida: String!
+    departamentoDestino: String!
+    codigoPostalNacional: Int
+}
+
+type EnvioNacional {
+    codigo: ID
+    origen: String
+    destino: String
+    precio: Float
+    fechaSalida: String
+    departamentoDestino: String
+    codigoPostalNacional: Int
+}
+
+input SeguimientoInput {
+    codigo: ID!
+    envioCodigo: String!
+    ubicacion: String!
+    orden: Int!
+    distanciaKm: Float!
+    fechaEvento: String!
+    confirmado: Boolean
+}
+
+type Seguimiento {
+    codigo: ID
+    envioCodigo: String
+    ubicacion: String
+    orden: Int
+    distanciaKm: Float
+    fechaEvento: String
+    confirmado: Boolean
+}
